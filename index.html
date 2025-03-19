@@ -61,6 +61,29 @@
         button:hover {
             background-color: #0056b3;
         }
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .tab-button {
+            background-color: #495057;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 5px;
+        }
+        .tab-button.active {
+            background-color: #007BFF;
+        }
+        .tab-content {
+            display: none;
+        }
+        .active-content {
+            display: block;
+        }
         footer {
             background-color: rgba(52, 58, 64, 0.8);
             color: white;
@@ -95,6 +118,17 @@
             
             document.getElementById("result").innerHTML = resultHTML;
         }
+
+        function openTab(tabName) {
+            let tabs = document.getElementsByClassName("tab-content");
+            let buttons = document.getElementsByClassName("tab-button");
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active-content");
+                buttons[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active-content");
+            document.querySelector(`[data-tab='${tabName}']`).classList.add("active");
+        }
     </script>
 </head>
 <body>
@@ -106,7 +140,21 @@
         <a href="#about">소개</a>
         <a href="#contact">문의</a>
     </nav>
-    <section id="grading">
+    <div class="tab-container">
+        <button class="tab-button active" data-tab="services" onclick="openTab('services')">서비스</button>
+        <button class="tab-button" data-tab="grading" onclick="openTab('grading')">채점 프로그램</button>
+    </div>
+    <section id="services" class="tab-content active-content">
+        <h2>우리의 서비스</h2>
+        <ul>
+            <li>법정 속기록 작성</li>
+            <li>회의록 및 인터뷰 기록</li>
+            <li>영상 및 오디오 파일 속기</li>
+            <li>자막 제작 및 타이핑 서비스</li>
+            <li>기타 맞춤형 속기 서비스</li>
+        </ul>
+    </section>
+    <section id="grading" class="tab-content">
         <h2>채점 프로그램</h2>
         <label for="original">원문 입력:</label>
         <textarea id="original"></textarea>
