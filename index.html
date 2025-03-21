@@ -104,6 +104,14 @@
 
         function openTab(tabName) {
             let tabs = document.getElementsByClassName("tab-content");
+            let allSections = document.querySelectorAll('section');
+
+            if (tabName === 'grading') {
+                allSections.forEach(section => section.style.display = 'none');
+            } else {
+                allSections.forEach(section => section.style.display = 'block');
+            }
+
             for (let i = 0; i < tabs.length; i++) {
                 tabs[i].classList.remove("active-content");
             }
@@ -117,9 +125,9 @@
     </header>
     <nav>
         <a href="#" onclick="openTab('services')">서비스</a>
+        <a href="#" onclick="openTab('about')">소개</a>
+        <a href="#" onclick="openTab('contact')">문의</a>
         <a href="#" onclick="openTab('grading')">채점 프로그램</a>
-        <a href="#about">소개</a>
-        <a href="#contact">문의</a>
     </nav>
     <section id="services" class="tab-content active-content">
         <h2>우리의 서비스</h2>
