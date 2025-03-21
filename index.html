@@ -104,18 +104,15 @@
 
         function openTab(tabName) {
             let tabs = document.getElementsByClassName("tab-content");
-            let allSections = document.querySelectorAll('section');
+            let mainSections = document.querySelectorAll('section:not(#grading)');
 
             if (tabName === 'grading') {
-                allSections.forEach(section => section.style.display = 'none');
+                mainSections.forEach(section => section.style.display = 'none');
+                document.getElementById('grading').style.display = 'block';
             } else {
-                allSections.forEach(section => section.style.display = 'block');
+                mainSections.forEach(section => section.style.display = 'block');
+                document.getElementById('grading').style.display = 'none';
             }
-
-            for (let i = 0; i < tabs.length; i++) {
-                tabs[i].classList.remove("active-content");
-            }
-            document.getElementById(tabName).classList.add("active-content");
         }
     </script>
 </head>
@@ -139,6 +136,15 @@
             <li>기타 맞춤형 속기 서비스</li>
         </ul>
     </section>
+    <section id="about">
+        <h2>회사 소개</h2>
+        <p>별걸 다 하는 속기사무소는 빠르고 정확한 속기 서비스를 제공합니다. 고객 맞춤형 서비스를 제공하며, 다양한 분야에서 활동하고 있습니다.</p>
+    </section>
+    <section id="contact">
+        <h2>문의하기</h2>
+        <p>전화: 010-1234-5678</p>
+        <p>이메일: info@speedsteno.com</p>
+    </section>
     <section id="grading" class="tab-content">
         <h2>채점 프로그램</h2>
         <label for="original">원문 입력:</label>
@@ -148,15 +154,6 @@
         <button onclick="compareText()">채점</button>
         <h3>결과:</h3>
         <div id="result" style="font-size: 18px; padding: 10px; background: white;"></div>
-    </section>
-    <section id="about">
-        <h2>회사 소개</h2>
-        <p>별걸 다 하는 속기사무소는 빠르고 정확한 속기 서비스를 제공합니다. 고객 맞춤형 서비스를 제공하며, 다양한 분야에서 활동하고 있습니다.</p>
-    </section>
-    <section id="contact">
-        <h2>문의하기</h2>
-        <p>전화: 010-1234-5678</p>
-        <p>이메일: info@speedsteno.com</p>
     </section>
     <footer>
         &copy; 2025 별걸 다 하는 속기사무소. All rights reserved.
