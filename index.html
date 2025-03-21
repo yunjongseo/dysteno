@@ -61,23 +61,6 @@
         button:hover {
             background-color: #0056b3;
         }
-        .tab-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .tab-button {
-            background-color: #495057;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 0 5px;
-        }
-        .tab-button.active {
-            background-color: #007BFF;
-        }
         .tab-content {
             display: none;
         }
@@ -97,10 +80,10 @@
             const originalText = document.getElementById("original").value;
             const revisedText = document.getElementById("revised").value;
             let resultHTML = "";
-            
+
             const originalWords = originalText.replace(/\s+/g, "").split("");
             const revisedWords = revisedText.replace(/\s+/g, "").split("");
-            
+
             let i = 0, j = 0;
             while (i < originalWords.length || j < revisedWords.length) {
                 if (i < originalWords.length && j < revisedWords.length && originalWords[i] === revisedWords[j]) {
@@ -115,19 +98,16 @@
                     j++;
                 }
             }
-            
+
             document.getElementById("result").innerHTML = resultHTML;
         }
 
         function openTab(tabName) {
             let tabs = document.getElementsByClassName("tab-content");
-            let buttons = document.getElementsByClassName("tab-button");
             for (let i = 0; i < tabs.length; i++) {
                 tabs[i].classList.remove("active-content");
-                buttons[i].classList.remove("active");
             }
             document.getElementById(tabName).classList.add("active-content");
-            document.querySelector(`[data-tab='${tabName}']`).classList.add("active");
         }
     </script>
 </head>
@@ -136,14 +116,11 @@
         <span>별걸 다 하는 속기사무소</span>
     </header>
     <nav>
-        <a href="#services">서비스</a>
+        <a href="#" onclick="openTab('services')">서비스</a>
+        <a href="#" onclick="openTab('grading')">채점 프로그램</a>
         <a href="#about">소개</a>
         <a href="#contact">문의</a>
     </nav>
-    <div class="tab-container">
-        <button class="tab-button active" data-tab="services" onclick="openTab('services')">서비스</button>
-        <button class="tab-button" data-tab="grading" onclick="openTab('grading')">채점 프로그램</button>
-    </div>
     <section id="services" class="tab-content active-content">
         <h2>우리의 서비스</h2>
         <ul>
@@ -163,6 +140,15 @@
         <button onclick="compareText()">채점</button>
         <h3>결과:</h3>
         <div id="result" style="font-size: 18px; padding: 10px; background: white;"></div>
+    </section>
+    <section id="about">
+        <h2>회사 소개</h2>
+        <p>별걸 다 하는 속기사무소는 빠르고 정확한 속기 서비스를 제공합니다. 고객 맞춤형 서비스를 제공하며, 다양한 분야에서 활동하고 있습니다.</p>
+    </section>
+    <section id="contact">
+        <h2>문의하기</h2>
+        <p>전화: 010-1234-5678</p>
+        <p>이메일: info@speedsteno.com</p>
     </section>
     <footer>
         &copy; 2025 별걸 다 하는 속기사무소. All rights reserved.
