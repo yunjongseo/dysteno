@@ -103,6 +103,7 @@
             const tabs = document.querySelectorAll('.tab-content');
             tabs.forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
+            document.getElementById('login-form').style.display = 'none'; // 로그인 창 숨기기
         }
 
         function compareText() {
@@ -131,6 +132,8 @@
         }
 
         function showLoginForm() {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
             document.getElementById('login-form').style.display = 'block';
         }
 
