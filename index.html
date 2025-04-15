@@ -1,3 +1,4 @@
+<!-- 전체 HTML 코드 시작 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -5,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>별걸 다 하는 속기사무소</title>
 
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
@@ -88,22 +88,22 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    let sessionTimer;
+    const SESSION_DURATION_MS = 60 * 60 * 1000;
+
     function setLoginState(state, email = "", role = "") {
       localStorage.setItem("isLoggedIn", state);
       localStorage.setItem("userEmail", email);
       localStorage.setItem("userRole", role);
+      if (state) startSessionTimer();
     }
 
-    function getLoginState() {
-      return localStorage.getItem("isLoggedIn") === "true";
-    }
-
-    function getUserEmail() {
-      return localStorage.getItem("userEmail") || "";
-    }
-
-    function getUserRole() {
-      return localStorage.getItem("userRole") || "";
+    function startSessionTimer() {
+      clearTimeout(sessionTimer);
+      sessionTimer = setTimeout(() => {
+        logout();
+        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+      }, SESSION_DURATION_MS);
     }
 
     function register() {
@@ -146,7 +146,7 @@
             document.getElementById('login-form').style.display = 'none';
             updateUI();
           } else {
-            throw new Error('사용자 정보가 없습니다.');
+            throw new Error('사용자 역할 정보를 찾을 수 없습니다.');
           }
         })
         .catch(error => {
@@ -165,9 +165,10 @@
     }
 
     function updateUI() {
-      const loggedIn = getLoginState();
-      const email = getUserEmail();
-      const role = getUserRole();
+      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+      const email = localStorage.getItem("userEmail") || "";
+      const role = localStorage.getItem("userRole") || "";
+
       const loginBtn = document.getElementById('login-button');
       const userEmail = document.getElementById('user-email');
 
@@ -194,7 +195,7 @@
     }
 
     function openTab(tabId) {
-      const isLoggedIn = getLoginState();
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
       if (tabId === 'grading' && !isLoggedIn) {
         alert('채점 프로그램은 로그인 후 이용할 수 있습니다.');
         return;
@@ -204,13 +205,14 @@
     }
 
     function protectAdminPage() {
-      const role = getUserRole();
+      const role = localStorage.getItem("userRole");
       if (role !== 'admin') {
-        alert('관리자 전용 페이지입니다.');
+        alert('이 페이지는 관리자만 접근할 수 있습니다.');
         openTab('services');
       } else {
         hideAllTabs();
         document.getElementById('admin-panel').classList.add('active');
+        loadUserList();
       }
     }
 
@@ -218,6 +220,33 @@
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.getElementById('login-form').style.display = 'none';
       document.getElementById('register-form').style.display = 'none';
+    }
+
+    function loadUserList() {
+      const listEl = document.getElementById("user-list");
+      listEl.innerHTML = "<p>로딩 중...</p>";
+      db.collection("users").get().then(snapshot => {
+        listEl.innerHTML = "";
+        snapshot.forEach(doc => {
+          const user = doc.data();
+          const row = document.createElement("div");
+          row.innerHTML = `
+            <span><b>${user.email}</b> (${user.role})</span>
+            <button onclick="changeRole('${doc.id}', '${user.role}')">권한 변경</button>
+          `;
+          listEl.appendChild(row);
+        });
+      });
+    }
+
+    function changeRole(uid, currentRole) {
+      const newRole = currentRole === 'admin' ? 'user' : 'admin';
+      db.collection('users').doc(uid).update({ role: newRole })
+        .then(() => {
+          alert(`권한이 ${newRole}로 변경되었습니다.`);
+          loadUserList();
+        })
+        .catch(err => alert("변경 실패: " + err.message));
     }
 
     window.onload = updateUI;
@@ -289,7 +318,7 @@
 
   <section id="admin-panel" class="tab-content">
     <h2>관리자 전용 페이지</h2>
-    <p>여기는 관리자만 접근할 수 있는 영역입니다.</p>
+    <div id="user-list"></div>
   </section>
 
   <footer>
