@@ -1,4 +1,3 @@
-<!-- 전체 HTML 코드 시작 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,72 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>별걸 다 하는 속기사무소</title>
 
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: url('별걸다하는속기사무소-05.jpg') no-repeat center/cover;
-      background-attachment: fixed;
-      color: white;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.6);
-    }
-    nav {
-      background-color: rgba(73, 80, 87, 0.8);
-      padding: 10px;
-      text-align: center;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-size: 18px;
-      cursor: pointer;
-    }
-    section {
-      padding: 20px;
-      max-width: 800px;
-      margin: 20px auto;
-      background: rgba(255, 255, 255, 0.9);
-      color: black;
-    }
-    .tab-content { display: none; }
-    .active { display: block; }
-    #login-form, #register-form {
-      display: none;
-      padding: 20px;
-      background: white;
-      max-width: 400px;
-      margin: 20px auto;
-      color: black;
-      text-align: center;
-    }
-    #login-form.shake {
-      animation: shake 0.5s;
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
-    footer {
-      background-color: rgba(52, 58, 64, 0.8);
-      color: white;
-      text-align: center;
-      padding: 10px;
-      margin-top: 20px;
-    }
-  </style>
 
   <script>
     const firebaseConfig = {
@@ -89,7 +26,7 @@
     const db = firebase.firestore();
 
     let sessionTimer;
-    const SESSION_DURATION_MS = 60 * 60 * 1000;
+    const SESSION_DURATION_MS = 60 * 60 * 1000; // 1시간
 
     function setLoginState(state, email = "", role = "") {
       localStorage.setItem("isLoggedIn", state);
@@ -165,14 +102,14 @@
     }
 
     function updateUI() {
-      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
       const email = localStorage.getItem("userEmail") || "";
       const role = localStorage.getItem("userRole") || "";
 
       const loginBtn = document.getElementById('login-button');
       const userEmail = document.getElementById('user-email');
 
-      if (loggedIn) {
+      if (isLoggedIn) {
         loginBtn.innerText = '로그아웃';
         loginBtn.onclick = logout;
         userEmail.innerText = `${email} (${role})`;
@@ -284,45 +221,12 @@
     <button onclick="register()">가입하기</button>
   </div>
 
-  <section id="services" class="tab-content active">
-    <h2>우리의 서비스</h2>
-    <ul>
-      <li>법정 속기록 작성</li>
-      <li>회의록 및 인터뷰 기록</li>
-      <li>영상 및 오디오 파일 속기</li>
-      <li>자막 제작 및 타이핑 서비스</li>
-      <li>기타 맞춤형 속기 서비스</li>
-    </ul>
-  </section>
-
-  <section id="about" class="tab-content">
-    <h2>회사 소개</h2>
-    <p>별걸 다 하는 속기사무소는 빠르고 정확한 속기 서비스를 제공합니다.</p>
-  </section>
-
-  <section id="contact" class="tab-content">
-    <h2>문의하기</h2>
-    <p>전화: 010-1234-5678</p>
-    <p>이메일: info@speedsteno.com</p>
-  </section>
-
-  <section id="grading" class="tab-content">
-    <h2>채점 프로그램</h2>
-    <label for="original">원문 입력:</label>
-    <textarea id="original"></textarea>
-    <label for="revised">수정문 입력:</label>
-    <textarea id="revised"></textarea>
-    <button onclick="compareText()">채점</button>
-    <div id="result" style="background:white; padding: 10px; margin-top: 10px;"></div>
-  </section>
-
   <section id="admin-panel" class="tab-content">
     <h2>관리자 전용 페이지</h2>
     <div id="user-list"></div>
   </section>
 
-  <footer>
-    &copy; 2025 별걸 다 하는 속기사무소. All rights reserved.
-  </footer>
+  <!-- 추가 섹션 및 콘텐츠는 여기에 이어서 작성 가능 -->
+
 </body>
 </html>
