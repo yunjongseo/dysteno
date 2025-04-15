@@ -1,4 +1,3 @@
-<!-- 기존 코드 상단에 Firebase SDK 추가 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -10,6 +9,69 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('별걸다하는속기사무소-05.jpg') no-repeat center/cover;
+      background-attachment: fixed;
+      color: white;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.6);
+    }
+    nav {
+      background-color: rgba(73, 80, 87, 0.8);
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    section {
+      padding: 20px;
+      max-width: 800px;
+      margin: 20px auto;
+      background: rgba(255, 255, 255, 0.9);
+      color: black;
+    }
+    .tab-content { display: none; }
+    .active { display: block; }
+    #login-form, #register-form {
+      display: none;
+      padding: 20px;
+      background: white;
+      max-width: 400px;
+      margin: 20px auto;
+      color: black;
+      text-align: center;
+    }
+    #login-form.shake {
+      animation: shake 0.5s;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    footer {
+      background-color: rgba(52, 58, 64, 0.8);
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: 20px;
+    }
+  </style>
 
   <script>
     const firebaseConfig = {
@@ -25,6 +87,24 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+
+    function setLoginState(state, email = "", role = "") {
+      localStorage.setItem("isLoggedIn", state);
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userRole", role);
+    }
+
+    function getLoginState() {
+      return localStorage.getItem("isLoggedIn") === "true";
+    }
+
+    function getUserEmail() {
+      return localStorage.getItem("userEmail") || "";
+    }
+
+    function getUserRole() {
+      return localStorage.getItem("userRole") || "";
+    }
 
     function register() {
       const email = document.getElementById('register-email').value;
@@ -66,7 +146,7 @@
             document.getElementById('login-form').style.display = 'none';
             updateUI();
           } else {
-            throw new Error('사용자 역할 정보를 찾을 수 없습니다.');
+            throw new Error('사용자 정보가 없습니다.');
           }
         })
         .catch(error => {
@@ -84,21 +164,66 @@
       });
     }
 
-    function protectAdminPage() {
-      const role = localStorage.getItem("userRole");
-      if (role !== 'admin') {
-        alert('이 페이지는 관리자만 접근할 수 있습니다.');
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        document.getElementById('services').classList.add('active');
+    function updateUI() {
+      const loggedIn = getLoginState();
+      const email = getUserEmail();
+      const role = getUserRole();
+      const loginBtn = document.getElementById('login-button');
+      const userEmail = document.getElementById('user-email');
+
+      if (loggedIn) {
+        loginBtn.innerText = '로그아웃';
+        loginBtn.onclick = logout;
+        userEmail.innerText = `${email} (${role})`;
+        userEmail.style.display = 'inline';
       } else {
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        loginBtn.innerText = '로그인';
+        loginBtn.onclick = showLoginForm;
+        userEmail.style.display = 'none';
+      }
+    }
+
+    function showLoginForm() {
+      hideAllTabs();
+      document.getElementById('login-form').style.display = 'block';
+    }
+
+    function showRegisterForm() {
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('register-form').style.display = 'block';
+    }
+
+    function openTab(tabId) {
+      const isLoggedIn = getLoginState();
+      if (tabId === 'grading' && !isLoggedIn) {
+        alert('채점 프로그램은 로그인 후 이용할 수 있습니다.');
+        return;
+      }
+      hideAllTabs();
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    function protectAdminPage() {
+      const role = getUserRole();
+      if (role !== 'admin') {
+        alert('관리자 전용 페이지입니다.');
+        openTab('services');
+      } else {
+        hideAllTabs();
         document.getElementById('admin-panel').classList.add('active');
       }
     }
+
+    function hideAllTabs() {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('register-form').style.display = 'none';
+    }
+
+    window.onload = updateUI;
   </script>
 </head>
 <body>
-  <!-- 관리자 전용 페이지 탭 -->
   <header>
     <span>별걸 다 하는 속기사무소</span>
     <div id="user-info">
@@ -115,9 +240,60 @@
     <a onclick="protectAdminPage()">관리자 페이지</a>
   </nav>
 
-  <section id="admin-panel" class="tab-content" style="display:none">
+  <div id="login-form">
+    <h2>로그인</h2>
+    <input type="text" id="email" placeholder="이메일"><br><br>
+    <input type="password" id="password" placeholder="비밀번호"><br><br>
+    <button onclick="login()">로그인</button><br><br>
+    <button onclick="showRegisterForm()">회원가입</button>
+  </div>
+
+  <div id="register-form">
+    <h2>회원가입</h2>
+    <input type="text" id="register-email" placeholder="이메일"><br><br>
+    <input type="password" id="register-password" placeholder="비밀번호"><br><br>
+    <button onclick="register()">가입하기</button>
+  </div>
+
+  <section id="services" class="tab-content active">
+    <h2>우리의 서비스</h2>
+    <ul>
+      <li>법정 속기록 작성</li>
+      <li>회의록 및 인터뷰 기록</li>
+      <li>영상 및 오디오 파일 속기</li>
+      <li>자막 제작 및 타이핑 서비스</li>
+      <li>기타 맞춤형 속기 서비스</li>
+    </ul>
+  </section>
+
+  <section id="about" class="tab-content">
+    <h2>회사 소개</h2>
+    <p>별걸 다 하는 속기사무소는 빠르고 정확한 속기 서비스를 제공합니다.</p>
+  </section>
+
+  <section id="contact" class="tab-content">
+    <h2>문의하기</h2>
+    <p>전화: 010-1234-5678</p>
+    <p>이메일: info@speedsteno.com</p>
+  </section>
+
+  <section id="grading" class="tab-content">
+    <h2>채점 프로그램</h2>
+    <label for="original">원문 입력:</label>
+    <textarea id="original"></textarea>
+    <label for="revised">수정문 입력:</label>
+    <textarea id="revised"></textarea>
+    <button onclick="compareText()">채점</button>
+    <div id="result" style="background:white; padding: 10px; margin-top: 10px;"></div>
+  </section>
+
+  <section id="admin-panel" class="tab-content">
     <h2>관리자 전용 페이지</h2>
     <p>여기는 관리자만 접근할 수 있는 영역입니다.</p>
   </section>
 
-  <!-- 기존 중복 탭 제거, 필요한 본문은 여기에 추가 -->
+  <footer>
+    &copy; 2025 별걸 다 하는 속기사무소. All rights reserved.
+  </footer>
+</body>
+</html>
