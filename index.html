@@ -4,6 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>별걸 다 하는 속기사무소</title>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5BtGSpgZVJdlsU2x90Av7xTgrknnM-OA",
+      authDomain: "dysteno-f8c69.firebaseapp.com",
+      projectId: "dysteno-f8c69",
+      storageBucket: "dysteno-f8c69.firebasestorage.app",
+      messagingSenderId: "773922079996",
+      appId: "1:773922079996:web:aa57916c32003a4a2b8379",
+      measurementId: "G-N901FZGZLL"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+  </script>
+  
   <style>
     body {
       font-family: Arial, sans-serif;
